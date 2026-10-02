@@ -1,0 +1,4 @@
+# Optional native headless runner; not installed/verified in this environment
+-r requirements.txt
+vnpy
+vnpy_portfoliostrategy

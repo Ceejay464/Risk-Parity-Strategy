@@ -1,0 +1,23 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Risk Parity · Research</title>
+<style>:root{--accent:#7752c9}*{box-sizing:border-box}body{margin:0;background:#f8f7f3;color:#142537;
+font:16px/1.7 system-ui,-apple-system,sans-serif}main{max-width:1120px;margin:auto;padding:56px 32px}
+.tag{color:var(--accent);font-size:12px;letter-spacing:.18em;font-weight:700}h1{font-size:clamp(32px,5vw,58px);
+letter-spacing:-.04em;line-height:1.12;margin:14px 0}.subtitle{font-size:20px;color:#667380;margin:0 0 32px}
+.hero{width:100%;display:block;border-radius:18px;border:1px solid #e6e3da}.grid{display:grid;
+grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}article{padding:24px;background:#fff;border-radius:14px;
+border:1px solid #e6e3da}h2{font-size:18px;margin:0 0 8px}p{margin:0 0 18px;color:#506174}a{color:var(--accent);
+text-decoration:none}a:hover{text-decoration:underline}nav{display:flex;flex-wrap:wrap;gap:22px;
+border-top:1px solid #e2dfd6;margin-top:36px;padding-top:22px}footer{font-size:13px;color:#75808a;margin-top:30px}
+@media(max-width:760px){main{padding:28px 16px}.grid{grid-template-columns:1fr}}</style></head><body><main>
+<div class="tag">QUANTITATIVE RESEARCH / LOCAL REPRODUCTION</div><h1>Risk Parity</h1><p class="subtitle">Balance risk. Adjust exposure. Limit positions.</p>
+<img class="hero" src="assets/teaser.png" alt="User-approved strategy schematic, not backtest results">
+<section class="grid"><article><h2>策略原样保留</h2><p>原策略、引擎与账本 Python 源码不变；新增入口与展示位于独立目录。</p>
+<a href="docs/IMPLEMENTATION_NOTES.md">查看实际行为与说明差异 →</a></article><article><h2>本地复现</h2><p>人工示例可直接运行；原始历史行情或部分模块未随包提供。</p>
+<a href="docs/REPRODUCE.md">查看数据格式与运行步骤 →</a></article><article><h2>可核验的结果</h2>
+<p>每次运行记录参数、依赖版本、输入与源码指纹，导出每日权益、交易记录和表格报告。</p>
+<a href="docs/VALIDATION.md">查看本次验证记录 →</a></article></section>
+<nav><a href="README.md">README</a><a href="Quickstart.ipynb">Quickstart Notebook</a>
+<a href="docs/ORIGINAL_README.md">原报告说明</a><a href="CHANGELOG.md">修改清单</a></nav>
+<footer>策略示意图已获用户批准。人工示例不是历史业绩。原研究报告与本次运行结果分别标注。</footer>
+</main></body></html>

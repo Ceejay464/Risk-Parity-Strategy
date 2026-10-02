@@ -1,0 +1,36 @@
+{
+  "symbols": [
+    "510300.SSE",
+    "510500.SSE",
+    "159915.SZSE",
+    "511010.SSE",
+    "511260.SSE",
+    "518880.SSE",
+    "513100.SSE"
+  ],
+  "setting": {
+    "rebalance_interval": 21,
+    "use_dynamic_weights": true,
+    "volatility_lookback": 60,
+    "target_portfolio_vol": 0.15,
+    "use_market_regime": true,
+    "ma_trend_lookback": 200,
+    "use_risk_parity": false,
+    "risk_parity_lookback": 60,
+    "risk_parity_max_iter": 100,
+    "risk_parity_tolerance": 1e-06,
+    "max_position_pct": 0.7,
+    "min_position_pct": 0.3,
+    "single_etf_max_pct": 0.35,
+    "max_drawdown_stop": 0.2,
+    "trailing_stop": 0.12,
+    "stop_loss_days": 20,
+    "use_dynamic_stop": true,
+    "peak_multiplier": 0.6,
+    "rebalance_threshold": 0.1
+  },
+  "capital": 1000000,
+  "rate": 0.0003,
+  "slippage": 0.001,
+  "profile": "notebook_variant_2"
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "original_path": "README.md",
+    "retained_path": "docs/ORIGINAL_README.md",
+    "sha256": "7ea61bb04713f4700ee9b41a5c804146ceb09b578f7684b9d63005fd823fa6ff",
+    "status": "archived_readme"
+  },
+  {
+    "original_path": "RiskParityETFStrategy/RiskParityETFStrategy.ipynb",
+    "retained_path": "RiskParityETFStrategy/RiskParityETFStrategy.ipynb",
+    "sha256": "15f3a36e27a7f9521294988a912a23fb2dea72b387e902b642f7977e8c34c6a4",
+    "status": "notebook_navigation_added",
+    "original_code_cells_sha256": "4a8a90758c78e648bf53a2caa82fc9c587897a690f0d4a9d2b69e413bf2dda17"
+  },
+  {
+    "original_path": "RiskParityETFStrategy/risk_parity_strategy.py",
+    "retained_path": "RiskParityETFStrategy/risk_parity_strategy.py",
+    "sha256": "726c88476fc1422a9b2fff10bc20b1fd4e0d6482817b25ab19a82051a4c94b8e",
+    "status": "unchanged"
+  },
+  {
+    "original_path": "RiskParityETFStrategy/风险平价策略.docx",
+    "retained_path": "RiskParityETFStrategy/风险平价策略.docx",
+    "sha256": "7c9983676c19a828be2b7afc151861e8136aa58c158ec9abbf4745c007311f0e",
+    "status": "unchanged"
+  }
+]
