@@ -1,5 +1,5 @@
-# 人工数据夹具 / Synthetic demo fixtures
+# Synthetic demonstration fixtures
 
-`demo_prices.csv` 是固定随机种子42生成的人工价格路径；日期仅是业务日序列，未使用真实交易所节假日日历。仅验证运行路径与状态变化，不能用于投资结论或替代历史回测。
+`demo_prices.csv` contains artificial price paths generated with seed 42. Dates follow a business-day sequence without an exchange holiday calendar. These inputs verify runtime paths and state changes, not historical investment performance.
 
-`*_template.csv` 只有表头。真实数据应由使用者准备，不能将人工价格混入历史数据。
+`*_template.csv` files contain headers only. Supply real market data separately and never mix synthetic rows into a historical dataset.

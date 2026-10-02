@@ -1,8 +1,8 @@
-# 参数配置
+# Parameter profiles
 
-主配置逐值提取自原 Notebook 第一段回测；未填写项继续使用原策略类默认值。原 Notebook 其他配置单独保存，不合并、不优化参数。
+The primary profile is extracted value for value from the first original notebook backtest. Omitted settings retain the original class defaults. Other notebook profiles are saved separately, without merging or optimization.
 
-| 参数 | 策略类默认值 | Notebook 主配置 |
+| Parameter | Strategy-class default | Primary notebook configuration |
 | :--- | ---: | ---: |
 | `rebalance_interval` | `21` | `21` |
 | `use_dynamic_weights` | `True` | `True` |
@@ -33,4 +33,4 @@
 | `initial_capital` | `1000000` | `1000000` |
 | `commission_rate` | `0.0003` | `0.0003` |
 
-`capital` 是回测账本初始资金；风险平价的 `initial_capital` 同时控制策略内部估算账本，两者应一致。`rate=0.0003`、`slippage=0.001`（每份绝对价格单位）、`size=1`、`pricetick=0.001` 来自原 Notebook。
+`capital` is the initial backtest ledger balance. Risk parity's `initial_capital` also controls its internal estimated cash ledger; the two should agree. Commission `rate=0.0003`, absolute per-share `slippage=0.001`, contract `size=1`, and `pricetick=0.001` follow the original notebook configuration.

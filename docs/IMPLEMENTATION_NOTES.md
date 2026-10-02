@@ -1,12 +1,12 @@
-# 实现说明与复现边界
+# Implementation notes and reproduction boundaries
 
-以下来自对包内代码与原文档的核对。重要逻辑未修改，疑点列明而不擅自修复。
+These notes compare the supplied code with its original documentation. Important behavior is retained; discrepancies are documented rather than silently repaired.
 
-- 原 README 描述60日均线与21交易日调仓；代码默认趋势窗口200日、配合20日均线，间隔比较的是日历天数。
-- 原 Notebook 存在 `use_risk_parity=True` 与 `False` 两种配置；注释与布尔值部分不一致，以实际赋值为准。
-- 源文件名为 `risk_parity_strategy.py`，原 Notebook 导入第三方安装包中的 `risk_parity_etf_strategy`；新入口直接载入包内实际文件。
-- 关闭风险平价或出现原判定异常时走逆波动率备用权重；市场状态、波动率缩放和单资产限制后的最终组合未必仍是等风险贡献。
-- `ArrayManager(size=300)` 决定完整初始化门槛，不能只提供60行数据。
-- 策略通过 `update_trade` 更新内部现金；账本费用与回测引擎配置应一致。原内部账本未计回测结果中的绝对滑点成本。
-- 原 `total_equity <= 0` 时会置为1.0；仓位归一化、权重偏差判断及该权益处理全部保留，不将美化扩展为算法修复。
-- 海外 ETF 被分类为 `overseas`，不自动按 `equity` 乘市场状态系数。所有资产分类表原样保留。
+- The original README describes a 60-day average and 21-trading-day rebalancing. Default code uses a 200-day average together with a 20-day average; intervals are evaluated as calendar-day differences.
+- Notebook configurations include both `use_risk_parity=True` and `False`. Several comments disagree with the Boolean values; actual assignments determine the profiles.
+- The source file is `risk_parity_strategy.py`, while the old notebook imports an installed `risk_parity_etf_strategy` module. New entry points load the bundled source directly.
+- Disabling risk parity or meeting the original exception conditions selects inverse-volatility fallback weights. Market-regime adjustments, exposure scaling, and single-asset caps can subsequently produce a portfolio with unequal risk contributions.
+- `ArrayManager(size=300)` determines full initialization, regardless of the shorter covariance or volatility lookback.
+- The strategy's `update_trade` callback updates internal cash. Commission settings should match the engine; internal cash does not account for the absolute slippage expense in engine results.
+- Nonpositive `total_equity` is replaced by 1.0 in the original implementation. This handling, normalization, and weight-drift logic remain unchanged.
+- Overseas ETFs are classified as `overseas`, not automatically scaled using the `equity` market-regime multipliers. The original classification table remains intact.

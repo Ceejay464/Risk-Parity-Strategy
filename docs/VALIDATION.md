@@ -1,25 +1,30 @@
-# 本次验证记录
+# Validation record
 
-验证日期：2026-10-02。原核心源码逐字保留；以下不表示原历史收益已经独立复现。
+Verification date: October 2, 2026. Executable calculations are preserved; reader-facing source text is translated. Exact original files are archived.
+The checks below do not establish independent reproduction of previously reported historical performance.
 
-## 已完成
+## Completed checks
 
-- 原文件 SHA-256 校验：所有原 Python 源码及原 CSV／Word／PDF保持原字节内容；原 Notebook代码单元、输出与执行计数保持不变。
-- 用户批准的 teaser 文件按原图字节复制；风险平价使用最后修正版。
-- 所有 Python文件语法解析、Notebook JSON结构与新增文档本地链接检查。
-- 新增基础运行入口执行成功，输入与引擎种类写入报告。
-- `python -m unittest discover -s tests -v`：8项通过。
+- SHA-256 integrity of exact original archives and unchanged market data; executable source structure compared after excluding reader text.
+- Executable structure of 67 original notebook code cells compared; displayed prose is translated and execution counts retained.
+- Approved teaser copied byte for byte; risk parity uses the final corrected version.
+- Python syntax, notebook JSON structure, and local documentation links checked.
+- All five base local entry points completed, with data kind and engine identified in the report.
+- `python -m unittest discover -s tests -v`: 8 checks passed.
 
-## 轻量本地演示
+## Lightweight demonstration
 
-固定种子人工数据：640个业务日切片、1238条交易记录，复用原策略类。
-测试额外核对：成交回调的持仓与现金更新、风险贡献平衡、300根初始化门槛。
+The original strategy class completed 640 synthetic daily slices and 1238 fills.
+Additional checks cover fill-callback position/cash updates, balanced actual risk contributions, and the 300-bar initialization gate.
 
-原生 vn.py 环境未安装，本次仅验证原生入口语法、帮助和依赖缺失提示，未运行原生完整回测。轻量适配器没有与原生撮合进行等价证明。
+Native vn.py was not installed. Native entry-point syntax, help, and missing-dependency messages were checked, but complete native backtesting remains unverified. No adapter/native matching equivalence is claimed.
 
-## 实际验证环境与范围
+## Environment and limits
 
-Python 3.13.1；NumPy 2.4.4；pandas 3.0.2；openpyxl 3.1.5。
+Python 3.13.1, NumPy 2.4.4, pandas 3.0.2, and openpyxl 3.1.5.
 
-未独立核验数据商来源、复权口径、交易所日历、期权可成交性或原研究报告业绩。未重新执行依赖缺失模块的原 Notebook。
-HTML已检查结构与本地链接，未做浏览器截图版式验证。输出报告为表格，不包含新增业绩图像。
+Data-vendor provenance, adjustment conventions, exchange calendars, option executability, and original reported returns were not independently validated. Original notebooks requiring absent modules were not reexecuted. HTML structure and links were checked without browser screenshot validation. New reports are table-only.
+
+## English-edition checks
+
+36 original Python sources and 67 notebook code cells passed executable-structure comparisons. All 15 custom-engine baseline cases matched original equity and trades exactly. Both portfolio daily-adapter comparisons matched equity, trades, saved strategy states, and pending orders exactly. This verifies translation behavior on the supplied inputs and demos; it does not establish historical performance or native vn.py equivalence.

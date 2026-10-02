@@ -80,7 +80,7 @@ def source_hashes(root):
     root = Path(root)
     return {str(p.relative_to(root)): sha256(p.read_bytes()).hexdigest()
             for p in sorted(root.rglob("*.py"))
-            if not set(p.relative_to(root).parts) & {"local", "tests", ".venv", "runs"}}
+            if not set(p.relative_to(root).parts) & {"local", "tests", ".venv", "runs", "archive"}}
 
 
 def prepare_output(path):
@@ -144,22 +144,22 @@ def export_run(root, output, equity, trades, capital, metadata, inputs=(), extra
     title = escape(str(metadata["project"]))
     accent = metadata.get("accent", "#146c94")
     rows = [
-        ("数据标记 / Data", metadata["data_kind"]),
-        ("引擎 / Engine", metadata["engine"]),
-        ("实际日期 / Observed dates", f'{metadata["observed_start"]} → {metadata["observed_end"]}'),
-        ("记录数 / Daily records", str(len(equity))),
-        ("初始资金 / Initial capital", f"{capital:,.2f}"),
-        ("期末权益 / Final equity", f"{values[-1]:,.2f}"),
-        ("区间收益 / Total return", f'{metadata["total_return_from_initial_capital"]:.2%}'),
-        ("最大回撤 / Maximum drawdown", f'{metadata["max_drawdown_including_initial_capital"]:.2%}'),
-        ("交易记录 / Trades", str(len(trades))),
+        ("Data provenance", metadata["data_kind"]),
+        ("Engine", metadata["engine"]),
+        ("Observed dates", f'{metadata["observed_start"]} → {metadata["observed_end"]}'),
+        ("Daily records", str(len(equity))),
+        ("Initial capital", f"{capital:,.2f}"),
+        ("Final equity", f"{values[-1]:,.2f}"),
+        ("Total return", f'{metadata["total_return_from_initial_capital"]:.2%}'),
+        ("Maximum drawdown", f'{metadata["max_drawdown_including_initial_capital"]:.2%}'),
+        ("Trade records", str(len(trades))),
     ]
     table = "".join(f"<tr><th>{escape(k)}</th><td>{escape(v)}</td></tr>" for k, v in rows)
-    demo_note = ("<p class='notice'>人工演示数据 / SYNTHETIC DEMO DATA — "
-                 "仅用于验证运行路径，不代表历史业绩。</p>" if metadata.get("demo") else
-                 "<p class='notice'>数据由项目包或使用者提供；本报告未独立验证行情来源与复权口径。</p>")
+    demo_note = ("<p class='notice'>SYNTHETIC DEMO DATA — "
+                 "Runtime verification only; not historical investment performance.</p>" if metadata.get("demo") else
+                 "<p class='notice'>Data supplied with the project or by the user. Market-data provenance and adjustment conventions were not independently verified.</p>")
     # A table-only report deliberately avoids adding unapproved charts.
-    report = f"""<!doctype html><html lang="zh-CN"><meta charset="utf-8">
+    report = f"""<!doctype html><html lang="en"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title>
 <style>body{{background:#f7f8fa;color:#18232f;font:16px/1.65 system-ui,sans-serif;margin:0}}
 main{{max-width:960px;margin:48px auto;padding:32px;background:white;border-radius:18px}}
@@ -170,10 +170,10 @@ th{{width:46%;font-weight:500;color:#506171}}a{{color:{accent}}}code{{overflow-w
 @media(max-width:700px){{main{{margin:12px;padding:20px}}h1{{font-size:25px}}}}</style>
 <main><div class="eyebrow">LOCAL RESEARCH RUN</div><h1>{title}</h1>{demo_note}<table>{table}</table>
 <p>{escape(str(metadata.get("execution_note", "")))}</p>
-<p>期末持仓按引擎原行为保留，没有额外强制平仓。统计以初始资金为起点，计入初始资金的权益峰值；
-只汇总实际日度记录，不替换原 Notebook 的年度收益与夏普计算。</p>
-<p><a href="equity.csv">每日权益</a> · <a href="trades.csv">交易记录</a> ·
-<a href="summary.json">参数与数据指纹</a> · <a href="run.log">运行日志</a></p></main></html>"""
+<p>Terminal positions follow the original engine behavior, without added forced liquidation. Summary metrics start from initial capital and include it in peak equity; 
+only observed daily records are summarized. Original notebook annual-return and Sharpe calculations are not replaced.</p>
+<p><a href="equity.csv">Daily equity</a> · <a href="trades.csv">Transactions</a> ·
+<a href="summary.json">Parameters and data hashes</a> · <a href="run.log">Run log</a></p></main></html>"""
     (output / "report.html").write_text(report, encoding="utf-8")
     print(f"Completed: {output}")
     print(f"Data: {metadata['data_kind']} | Engine: {metadata['engine']}")

@@ -12,62 +12,62 @@ from vnpy_portfoliostrategy.utility import PortfolioBarGenerator
 
 
 class EnhancedRiskParityStrategy(StrategyTemplate):
-    """Enhanced risk parity strategy: dynamic weights, volatility targeting, and actual risk parity"""
+    """增强版风险平价策略 - 动态权重 + 波动率目标 + 真实风险平价"""
 
     author = "EnhancedRiskParity"
 
-    # ========== Strategy parameters ==========
-    # Rebalance frequency
-    rebalance_interval = 21  # Monthly rebalancing
+    # ========== 策略参数 ==========
+    # 调仓频率
+    rebalance_interval = 21  # 月度调仓
 
-    # Dynamic weight parameters based on volatility
-    use_dynamic_weights = True  # Enable dynamic weights
-    volatility_lookback = 60  # Volatility calculation window
-    target_portfolio_vol = 0.08  # Target portfolio volatility: 8%
+    # 动态权重参数（基于波动率）
+    use_dynamic_weights = True  # 启用动态权重
+    volatility_lookback = 60  # 波动率计算窗口
+    target_portfolio_vol = 0.08  # 目标组合波动率8%
 
-    # Market regime detection
-    use_market_regime = True  # Enable market regime detection
-    ma_trend_lookback = 200  # Moving-average trend detection window
+    # 市场状态判断
+    use_market_regime = True  # 启用市场状态判断
+    ma_trend_lookback = 200  # 均线趋势判断窗口
 
-    # Risk parity parameters (upgraded version)
-    use_risk_parity = True  # Enable risk parity; otherwise use fixed weights
-    risk_parity_lookback = 60  # Covariance matrix window
-    risk_parity_max_iter = 100  # Maximum risk parity iterations
-    risk_parity_tolerance = 1e-6  # Risk parity convergence tolerance
+    # 风险平价参数（升级版）
+    use_risk_parity = True  # 启用风险平价（否则用固定权重）
+    risk_parity_lookback = 60  # 协方差矩阵窗口
+    risk_parity_max_iter = 100  # 风险平价最大迭代次数
+    risk_parity_tolerance = 1e-6  # 风险平价收敛精度
 
-    # Position management
-    max_position_pct = 0.95  # Maximum total allocation: 95%
-    min_position_pct = 0.40  # Minimum total allocation: 40%
-    single_etf_max_pct = 0.50  # Maximum position percentage in one ETF
-    use_full_capital = True  # Whether to use all capital: True=dynamic cash management; False=direct weight scaling
+    # 仓位管理
+    max_position_pct = 0.95  # 最大总仓位95%
+    min_position_pct = 0.40  # 最小总仓位40%
+    single_etf_max_pct = 0.50  # 单只ETF最大持仓比例
+    use_full_capital = True  # 是否使用全部资金（True=动态现金管理，False=直接缩放权重）
 
-    # Risk controls
-    max_drawdown_stop = 0.18  # Maximum drawdown stop: 18%
-    trailing_stop = 0.10  # Trailing stop: 10%
-    stop_loss_days = 20  # Cooldown days after a stop loss
+    # 风险控制
+    max_drawdown_stop = 0.18  # 最大回撤止损线18%
+    trailing_stop = 0.10  # 移动止损10%
+    stop_loss_days = 20  # 止损后冷却天数
 
-    # Dynamic stop loss: tighten after equity reaches a new high
-    use_dynamic_stop = True  # Enable dynamic stop loss
-    peak_multiplier = 0.5  # Stop-loss tightening multiplier after a new peak
+    # 动态止损（权益创新高后收紧止损）
+    use_dynamic_stop = True  # 启用动态止损
+    peak_multiplier = 0.5  # 创新高后止损收紧倍数
 
-    # Market regime adjustment factors (optimized version)
-    bullish_equity_multiplier = 1.2  # Equity weight multiplier in a bull market
-    bullish_bond_multiplier = 0.8  # Bond weight multiplier in a bull market
-    bearish_equity_multiplier = 0.7  # Equity weight multiplier in a bear market
-    bearish_gold_multiplier = 1.4  # Gold weight multiplier in a bear market
-    bearish_bond_multiplier = 1.1  # Bond weight multiplier in a bear market
+    # 市场状态调整系数（优化版）
+    bullish_equity_multiplier = 1.2  # 牛市中股票权重倍数
+    bullish_bond_multiplier = 0.8  # 牛市中债券权重倍数
+    bearish_equity_multiplier = 0.7  # 熊市中股票权重倍数
+    bearish_gold_multiplier = 1.4  # 熊市中黄金权重倍数
+    bearish_bond_multiplier = 1.1  # 熊市中债券权重倍数
 
-    # Rebalance threshold
-    rebalance_threshold = 0.10  # Rebalance only when weight deviation exceeds 10%
+    # 再平衡阈值
+    rebalance_threshold = 0.10  # 权重偏离超过10%才调仓
 
-    # Base parameters
+    # 基础参数
     price_add = 0.01
     initial_capital = 1_000_000
 
-    # Execution costs used for internal cash estimates; keep them consistent with the backtest engine where possible
+    # 成交成本：这里用于策略内部现金估算，要和回测引擎设置尽量一致
     commission_rate = 0.0003
 
-    # ========== Strategy variables ==========
+    # ========== 策略变量 ==========
     current_weights: Dict[str, float] = {}
     target_weights: Dict[str, float] = {}
     last_rebalance_date: Optional[datetime] = None
@@ -77,9 +77,9 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
     stop_start_date: Optional[datetime] = None
     market_trend: str = "neutral"  # bullish, bearish, neutral
     current_volatility: float = 0.0
-    current_risk_scale: float = 1.0  # Current risk scaling factor
+    current_risk_scale: float = 1.0  # 当前风险缩放因子
 
-    # Record historical equity
+    # 记录历史权益
     equity_history: List[float] = []
     daily_returns: List[float] = []
 
@@ -135,7 +135,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
     ) -> None:
         super().__init__(strategy_engine, strategy_name, vt_symbols, setting)
 
-        # Store ArrayManager instances
+        # 存储ArrayManager
         self.ams: Dict[str, ArrayManager] = {}
         for vt_symbol in self.vt_symbols:
             self.ams[vt_symbol] = ArrayManager(size=300)
@@ -145,8 +145,8 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         self.last_rebalance_date: Optional[datetime] = None
         self.last_date: Optional[date] = None
 
-        # Capital management: internally estimated funds used for position sizing
-        # Must update through update_trade; do not rely on on_trade
+        # 资金管理：这是策略内部估算资金，用于仓位计算。
+        # 注意：必须通过 update_trade 更新，不能依赖 on_trade。
         self.current_capital: float = float(self.initial_capital)
         self.total_equity: float = float(self.initial_capital)
         self.peak_equity: float = float(self.initial_capital)
@@ -154,23 +154,23 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         self.is_stopped: bool = False
         self.stop_start_date: Optional[datetime] = None
 
-        # Historical records
+        # 历史记录
         self.equity_history: List[float] = []
         self.daily_returns: List[float] = []
 
-        # Market regime
+        # 市场状态
         self.market_trend: str = "neutral"
         self.current_volatility: float = 0.0
         self.current_risk_scale: float = 1.0
 
-        # Asset classification
+        # 资产分类
         self.asset_groups: Dict[str, str] = {}
         self._classify_assets()
 
         self.pbg = PortfolioBarGenerator(self.on_bars)
 
     def _classify_assets(self) -> None:
-        """Asset classification"""
+        """资产分类"""
         for vt_symbol in self.vt_symbols:
             code = vt_symbol.split(".")[0]
 
@@ -186,27 +186,27 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
                 self.asset_groups[vt_symbol] = "other"
 
     def on_init(self) -> None:
-        self.write_log(f"Initializing enhanced risk parity; initial capital: {self.initial_capital:.2f}")
-        self.write_log(f"Capital management mode: {'Dynamic cash management' if self.use_full_capital else 'Direct weight scaling'}")
+        self.write_log(f"增强版风险平价策略初始化，初始资金: {self.initial_capital:.2f}")
+        self.write_log(f"资金管理模式: {'动态现金管理' if self.use_full_capital else '直接缩放权重'}")
         self.load_bars(max(self.volatility_lookback, self.ma_trend_lookback, self.risk_parity_lookback, 100))
 
     def on_start(self) -> None:
-        self.write_log("Strategy started")
+        self.write_log("策略启动")
 
     def on_stop(self) -> None:
-        self.write_log("Strategy stopped")
+        self.write_log("策略停止")
 
     def on_tick(self, tick: TickData) -> None:
         self.pbg.update_tick(tick)
 
     def update_trade(self, trade: TradeData) -> None:
         """
-        Update after a trade.
+        成交更新。
 
-        Important fixes:
-        Do not rely on on_trade in PortfolioStrategy backtests.
-        Override update_trade and call the parent first so get_pos is updated correctly;
-        then update the strategy's internal cash ledger.
+        重要修复：
+        PortfolioStrategy回测里不要依赖 on_trade。
+        这里重载 update_trade，先调用父类，确保 get_pos 正常更新；
+        然后更新策略内部现金账本。
         """
         super().update_trade(trade)
 
@@ -214,9 +214,9 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         trade_value = trade.price * trade.volume * size
         commission = abs(trade_value) * self.commission_rate
 
-        # For ETFs and stocks with net positions
-        # Buy (Direction.LONG) spends cash
-        # Sell (Direction.SHORT) receives cash
+        # 对ETF/股票这类净持仓品种：
+        # 买入(Direction.LONG) = 花现金
+        # 卖出(Direction.SHORT) = 收现金
         if trade.direction == Direction.LONG:
             self.current_capital -= trade_value
         elif trade.direction == Direction.SHORT:
@@ -226,21 +226,21 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
 
     def calculate_price(self, vt_symbol: str, direction: Direction, reference: float) -> float:
         """
-        Calculate the order price.
+        计算委托价格。
 
-        Apply price_add, which was ineffective in the earlier code.
-        Raise buy prices and lower sell prices slightly to improve fill probability.
+        原代码里的 price_add 没有生效，这里补上。
+        买入适当加价，卖出适当减价，提高成交概率。
         """
         if direction == Direction.LONG:
             return reference + self.price_add
         else:
             return max(reference - self.price_add, 0.01)
 
-    # ========== Core: dynamic weight calculation ==========
+    # ========== 核心：动态权重计算 ==========
     def calculate_volatility(self, am: ArrayManager) -> float:
-        """Calculate annualized volatility"""
+        """计算年化波动率"""
         if not am.inited or len(am.close) < self.volatility_lookback + 1:
-            return 0.16  # Default volatility: 16%
+            return 0.16  # 默认16%波动率
 
         closes = np.asarray(am.close[-self.volatility_lookback - 1:], dtype=float)
         if np.any(closes <= 0):
@@ -251,10 +251,10 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
 
         daily_vol = np.std(returns)
         annual_vol = daily_vol * np.sqrt(252)
-        return max(0.05, min(0.40, annual_vol))  # Limit to 5%-40%
+        return max(0.05, min(0.40, annual_vol))  # 限制在5%-40%
 
     def calculate_inverse_vol_weights(self) -> Dict[str, float]:
-        """Inverse-volatility weighting (fallback without correlations)"""
+        """波动率倒数加权（备用方案，不考虑相关性）"""
         volatilities = {}
 
         for vt_symbol, am in self.ams.items():
@@ -279,13 +279,13 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
 
     def calculate_risk_parity_weights(self) -> Dict[str, float]:
         """
-        Risk parity optimization accounting for correlations
+        风险平价优化（考虑相关性）
 
-        Corrections:
-        1. Regularize the covariance matrix;
-        2. Guard against negative or invalid risk contributions;
-        3. Use damped multiplicative updates to reduce weight oscillation;
-        4. Retain the last valid weights if convergence fails, instead of aborting.
+        修复点：
+        1. 对协方差矩阵做正则化；
+        2. 对风险贡献为负/异常的情况做保护；
+        3. 使用带阻尼的乘法更新，减少权重震荡；
+        4. 不收敛时保留最后一组有效权重，而不是报错中断。
         """
         if not self.use_risk_parity:
             return self.calculate_inverse_vol_weights()
@@ -321,7 +321,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             if cov_matrix.ndim == 0:
                 return self.calculate_inverse_vol_weights()
 
-            # Regularize to avoid a singular matrix
+            # 正则化，避免奇异矩阵
             avg_var = np.mean(np.diag(cov_matrix))
             if not np.isfinite(avg_var) or avg_var <= 0:
                 avg_var = 1e-4
@@ -330,7 +330,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             cov_matrix = np.nan_to_num(cov_matrix, nan=0.0, posinf=0.0, neginf=0.0)
 
         except Exception as e:
-            self.write_log(f"Covariance matrix calculation failed: {e}; use the simplified version")
+            self.write_log(f"协方差矩阵计算失败: {e}，使用简化版")
             return self.calculate_inverse_vol_weights()
 
         n_assets = len(valid_symbols)
@@ -345,34 +345,34 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             portfolio_var = weights @ cov_w
 
             if not np.isfinite(portfolio_var) or portfolio_var <= 1e-12:
-                self.write_log("Invalid portfolio variance; use simplified inverse-volatility weights")
+                self.write_log("组合方差异常，使用简化版波动率倒数权重")
                 return self.calculate_inverse_vol_weights()
 
             portfolio_vol = np.sqrt(portfolio_var)
 
-            # Risk contribution: RC_i = w_i * (Sigma w)_i / sigma
+            # 风险贡献：RC_i = w_i * (Σw)_i / σ
             risk_contrib = weights * cov_w / portfolio_vol
 
             if np.any(~np.isfinite(risk_contrib)):
                 return self.calculate_inverse_vol_weights()
 
-            # Negative risk contributions indicate that this covariance structure is unsuitable for this simple iteration; fall back to inverse volatility
+            # 出现负风险贡献时，说明协方差结构不适合这个简单迭代，回退到倒数波动率
             if np.any(risk_contrib <= 0):
-                self.write_log("Non-positive risk contribution; use simplified inverse-volatility weights")
+                self.write_log("风险贡献出现非正值，使用简化版波动率倒数权重")
                 return self.calculate_inverse_vol_weights()
 
             target_risk = np.mean(risk_contrib)
             if target_risk <= 0 or not np.isfinite(target_risk):
                 return self.calculate_inverse_vol_weights()
 
-            # Convergence condition: approximately equal risk contributions
+            # 收敛条件：风险贡献接近相等
             rc_error = np.max(np.abs(risk_contrib - target_risk))
             if rc_error < self.risk_parity_tolerance:
                 converged = True
-                self.write_log(f"Risk parity iteration converged after{iteration + 1} iterations")
+                self.write_log(f"风险平价迭代收敛，共{iteration + 1}次迭代")
                 break
 
-            # Damped multiplicative update to avoid excessive oscillation from the original target/risk_contrib ratio
+            # 带阻尼的乘法更新，避免原版 target/risk_contrib 过度震荡
             update_ratio = np.sqrt(target_risk / risk_contrib)
             update_ratio = np.clip(update_ratio, 0.5, 2.0)
 
@@ -382,11 +382,11 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
 
             if np.max(np.abs(weights - weights_old)) < self.risk_parity_tolerance:
                 converged = True
-                self.write_log(f"Risk parity weights converged after{iteration + 1} iterations")
+                self.write_log(f"风险平价权重收敛，共{iteration + 1}次迭代")
                 break
 
         if not converged:
-            self.write_log("Risk parity did not fully converge; use the last valid weights")
+            self.write_log("风险平价未完全收敛，使用最后一组有效权重")
 
         weights = np.maximum(weights, 0)
         weight_sum = np.sum(weights)
@@ -400,7 +400,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         return result
 
     def apply_market_regime(self, weights: Dict[str, float]) -> Dict[str, float]:
-        """Adjust weights for the market regime (optimized to avoid abrupt changes)"""
+        """根据市场状态调整权重（优化版，避免剧烈变化）"""
         if not self.use_market_regime:
             return weights
 
@@ -409,7 +409,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         adjusted_weights = weights.copy()
 
         if self.market_trend == "bullish":
-            # Bull market: increase equity weights and reduce bond weights
+            # 牛市中：提高股票权重，降低债券权重
             for vt_symbol in list(adjusted_weights.keys()):
                 asset_type = self.asset_groups.get(vt_symbol, "other")
 
@@ -419,7 +419,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
                     adjusted_weights[vt_symbol] *= self.bullish_bond_multiplier
 
         elif self.market_trend == "bearish":
-            # Bear market: reduce equity weights and increase gold and bond weights
+            # 熊市中：降低股票权重，提高黄金和债券权重
             for vt_symbol in list(adjusted_weights.keys()):
                 asset_type = self.asset_groups.get(vt_symbol, "other")
 
@@ -430,7 +430,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
                 elif asset_type == "bond":
                     adjusted_weights[vt_symbol] *= self.bearish_bond_multiplier
 
-        # Renormalize
+        # 重新归一化
         total = sum(adjusted_weights.values())
         if total > 0:
             adjusted_weights = {k: v / total for k, v in adjusted_weights.items()}
@@ -438,16 +438,16 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         return adjusted_weights
 
     def detect_market_trend(self) -> None:
-        """Detect the market trend"""
+        """检测市场趋势"""
         benchmark = None
 
-        # Prefer the CSI 300 ETF
+        # 优先使用沪深300ETF
         for vt_symbol in self.vt_symbols:
             if "510300" in vt_symbol:
                 benchmark = self.ams[vt_symbol]
                 break
 
-        # If 510300 is unavailable, use the first equity asset as a fallback
+        # 如果没有510300，退而求其次使用第一只权益类资产
         if benchmark is None:
             for vt_symbol in self.vt_symbols:
                 if self.asset_groups.get(vt_symbol) == "equity":
@@ -479,13 +479,13 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
 
     def apply_volatility_target(self, weights: Dict[str, float]) -> Dict[str, float]:
         """
-        Volatility targeting adjustment (corrected version)
+        波动率目标调整（修正版）
 
         use_full_capital=True:
-            Keep weights normalized; apply risk scaling to target positions through current_risk_scale.
+            权重本身保持归一化，风险缩放通过 current_risk_scale 在目标仓位里体现。
 
         use_full_capital=False:
-            Scale weights directly into target position fractions.
+            权重直接缩放成目标仓位比例。
         """
         if not weights:
             self.current_risk_scale = 1.0
@@ -506,7 +506,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
 
         if portfolio_vol > self.target_portfolio_vol and portfolio_vol > 0:
             scale = self.target_portfolio_vol / portfolio_vol
-            scale = max(0.5, min(1.0, scale))  # Limit the maximum reduction to 50%
+            scale = max(0.5, min(1.0, scale))  # 限制最大降幅50%
         else:
             scale = 1.0
 
@@ -522,7 +522,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         return adjusted_weights
 
     def calculate_portfolio_volatility(self, weights: Dict[str, float]) -> float:
-        """Calculate expected portfolio volatility"""
+        """计算组合预期波动率"""
         if len(weights) < 2:
             return 0.16
 
@@ -566,8 +566,8 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             if weight_sum <= 0:
                 return 0.16
 
-            # Estimate portfolio volatility from normalized weights here
-            # Position scaling is applied in calculate_target_positions
+            # 这里按归一化权重估算组合自身波动率，
+            # 仓位缩放在 calculate_target_positions 中体现。
             weight_array = weight_array / weight_sum
 
             portfolio_var = weight_array @ cov_matrix @ weight_array
@@ -578,19 +578,19 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             portfolio_vol = np.sqrt(portfolio_var)
 
         except Exception as e:
-            self.write_log(f"Portfolio volatility calculation failed: {e}")
+            self.write_log(f"组合波动率计算失败: {e}")
             return 0.16
 
         return max(0.05, min(0.40, float(portfolio_vol)))
 
-    # ========== Risk controls ==========
+    # ========== 风险控制 ==========
     def check_risk_controls(self, total_equity: float, current_datetime: datetime) -> bool:
-        """Enhanced risk controls"""
+        """增强版风险控制"""
         if total_equity <= 0:
-            self.write_log("Total equity is non-positive; trigger risk controls")
+            self.write_log("总权益小于等于0，触发风控")
             return True
 
-        # Check the cooldown period
+        # 冷却期检查
         if self.is_stopped and self.stop_start_date:
             days_passed = (current_datetime - self.stop_start_date).days
 
@@ -601,18 +601,18 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
                 self.peak_equity = total_equity
                 self.peak_equity_date = current_datetime
                 self.equity_history = []
-                self.write_log("Stop-loss cooldown ended; resume trading")
+                self.write_log("止损冷却期结束，恢复交易")
                 return False
 
-        # Update the equity peak
+        # 更新权益峰值
         if total_equity > self.peak_equity:
             self.peak_equity = total_equity
             self.peak_equity_date = current_datetime
 
-        # Calculate current drawdown
+        # 计算当前回撤
         drawdown = (self.peak_equity - total_equity) / self.peak_equity if self.peak_equity > 0 else 0
 
-        # Dynamic stop-loss threshold
+        # 动态止损阈值
         stop_threshold = self.max_drawdown_stop
 
         if self.use_dynamic_stop and self.peak_equity_date:
@@ -621,12 +621,12 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             if days_since_peak < 30:
                 stop_threshold = self.max_drawdown_stop * self.peak_multiplier
 
-        # Check maximum drawdown stop
+        # 检查最大回撤止损
         if drawdown > stop_threshold:
-            self.write_log(f"Maximum drawdown stop triggered: {drawdown:.2%} > {stop_threshold:.2%}")
+            self.write_log(f"触发最大回撤止损: {drawdown:.2%} > {stop_threshold:.2%}")
             return True
 
-        # Check trailing stop
+        # 检查移动止损
         if len(self.equity_history) >= 10:
             max_equity_recent = max(self.equity_history[-10:])
             trailing_drawdown = (
@@ -636,10 +636,10 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             )
 
             if trailing_drawdown > self.trailing_stop:
-                self.write_log(f"Trailing stop triggered: {trailing_drawdown:.2%} > {self.trailing_stop:.2%}")
+                self.write_log(f"触发移动止损: {trailing_drawdown:.2%} > {self.trailing_stop:.2%}")
                 return True
 
-        # Update history
+        # 更新历史
         self.equity_history.append(total_equity)
         if len(self.equity_history) > 50:
             self.equity_history.pop(0)
@@ -647,8 +647,8 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         return False
 
     def update_total_equity(self, bars: Dict[str, BarData]) -> float:
-        """Update total equity"""
-        # Important fix: do not use max(0, current_capital); negative cash must remain a liability
+        """更新总权益"""
+        # 重要修复：不能 max(0, current_capital)，负现金必须反映为负债
         cash = self.current_capital
         position_value = 0.0
 
@@ -662,7 +662,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
 
         if self.total_equity <= 0:
             self.write_log(
-                f"Invalid equity: cash={cash:.2f}, position_value={position_value:.2f}, "
+                f"权益异常: cash={cash:.2f}, position_value={position_value:.2f}, "
                 f"total_equity={self.total_equity:.2f}"
             )
             self.total_equity = 1.0
@@ -674,7 +674,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         total_equity: float,
         bars: Dict[str, BarData]
     ) -> Dict[str, float]:
-        """Calculate current weights from actual position market values"""
+        """根据真实持仓市值计算当前权重"""
         current_weights = {}
 
         if total_equity <= 0:
@@ -694,7 +694,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         return current_weights
 
     def need_rebalance(self, current_weights: Dict[str, float], target_weights: Dict[str, float]) -> bool:
-        """Check whether rebalancing is required"""
+        """检查是否需要再平衡"""
         if not target_weights:
             return False
 
@@ -707,7 +707,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             current = current_weights.get(vt_symbol, 0)
             target = target_weights.get(vt_symbol, 0)
 
-            # Weight deviation exceeds the threshold
+            # 权重偏离超过阈值
             if abs(current - target) > self.rebalance_threshold:
                 return True
 
@@ -720,13 +720,13 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         bars: Dict[str, BarData]
     ) -> Dict[str, int]:
         """
-        Calculate target positions
+        计算目标持仓
 
-        Important fixes:
-        1. Apply max_position_pct even when use_full_capital=True;
-        2. current_risk_scale affects only total risk exposure;
-        3. single_etf_max_pct caps the market value of each ETF;
-        4. Estimate target positions using bar.close_price; calculate_price controls actual order prices.
+        重要修复：
+        1. use_full_capital=True 时也必须使用 max_position_pct；
+        2. current_risk_scale 只影响总风险暴露；
+        3. single_etf_max_pct 限制单只ETF市值；
+        4. 目标仓位按bar.close_price估算，真实委托价格由 calculate_price 控制。
         """
         targets = {}
 
@@ -744,7 +744,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             else:
                 total_position_pct = self.max_position_pct
         else:
-            # With use_full_capital=False, apply_volatility_target may already have scaled weights
+            # use_full_capital=False 时，weights 可能已经被 apply_volatility_target 缩放
             total_position_pct = min(sum(w for w in weights.values() if w > 0), self.max_position_pct)
 
         total_position_pct = max(self.min_position_pct, min(self.max_position_pct, total_position_pct))
@@ -767,18 +767,18 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             if price <= 0 or size <= 0:
                 continue
 
-            # Target market value
+            # 目标市值
             if self.use_full_capital:
                 target_value = total_equity * total_position_pct * weight / total_weight
             else:
-                # In this mode weights may represent position fractions, but total exposure is still capped
+                # 此模式下weights本身可能代表仓位比例，但仍限制总仓位
                 target_value = total_equity * weight
 
-            # Single-ETF limit
+            # 单只ETF限制
             max_single_value = total_equity * self.single_etf_max_pct
             target_value = min(target_value, max_single_value)
 
-            # Guard against negative or non-finite values
+            # 防止出现负值或非有限值
             if target_value <= 0 or not np.isfinite(target_value):
                 continue
 
@@ -789,9 +789,9 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
 
         return targets
 
-    # ========== Main logic ==========
+    # ========== 主逻辑 ==========
     def on_bars(self, bars: Dict[str, BarData]) -> None:
-        """Bar slice callback"""
+        """K线切片回调"""
         if not bars:
             return
 
@@ -799,28 +799,28 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
         current_datetime = current_bar.datetime
         current_date = current_datetime.date()
 
-        # Update bar data
+        # 更新K线数据
         for vt_symbol, bar in bars.items():
             am = self.ams.get(vt_symbol)
             if am:
                 am.update_bar(bar)
 
-        # Wait for all asset data to initialize
+        # 等待所有资产数据初始化
         if not all(am.inited for am in self.ams.values()):
             return
 
-        # Update total equity
+        # 更新总权益
         total_equity = self.update_total_equity(bars)
 
-        # Calculate current weights from actual positions
+        # 用真实持仓计算当前权重
         self.current_weights = self.calculate_current_weights(total_equity, bars)
 
-        # Risk controls
+        # 风险控制
         if self.check_risk_controls(total_equity, current_datetime):
             if not self.is_stopped:
                 self.is_stopped = True
                 self.stop_start_date = current_datetime
-                self.write_log(f"Risk controls triggered; close all positions; cooldown{self.stop_loss_days} days")
+                self.write_log(f"触发风控，清空所有持仓，冷却{self.stop_loss_days}天")
 
                 for vt_symbol in self.vt_symbols:
                     if self.get_pos(vt_symbol) != 0:
@@ -836,7 +836,7 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             self.put_event()
             return
 
-        # Determine whether rebalancing is needed
+        # 判断是否需要调仓
         time_rebalance = False
 
         if self.last_rebalance_date is None:
@@ -854,80 +854,80 @@ class EnhancedRiskParityStrategy(StrategyTemplate):
             self.put_event()
             return
 
-        # Prevent repeated rebalancing on the same day
+        # 防止同一天重复调仓
         if self.last_date == current_date:
             self.put_event()
             return
 
         self.last_date = current_date
 
-        # 1. Calculate base weights using risk parity with correlations
+        # 1. 计算基础权重（风险平价，考虑相关性）
         base_weights = self.calculate_risk_parity_weights()
 
         if not base_weights:
-            self.write_log("Weight calculation failed; skip rebalancing")
+            self.write_log("权重计算失败，跳过调仓")
             self.put_event()
             return
 
-        # 2. Market regime adjustment
+        # 2. 市场状态调整
         regime_weights = self.apply_market_regime(base_weights)
 
-        # 3. Volatility targeting adjustment
+        # 3. 波动率目标调整
         final_weights = self.apply_volatility_target(regime_weights)
 
         if not final_weights:
-            self.write_log("No weights after volatility targeting; skip rebalancing")
+            self.write_log("波动率目标调整后权重为空，跳过调仓")
             self.put_event()
             return
 
-        # Save target weights
+        # 保存目标权重
         self.target_weights = final_weights.copy()
 
-        # 4. Calculate target positions
+        # 4. 计算目标持仓
         targets = self.calculate_target_positions(total_equity, final_weights, bars)
 
         if not targets:
-            self.write_log("Target position calculation failed")
+            self.write_log("目标仓位计算失败")
             self.put_event()
             return
 
-        # 5. Execute rebalancing
+        # 5. 执行调仓
         rebalance_log = []
 
-        # Close positions
+        # 平仓
         for vt_symbol in self.vt_symbols:
             current_pos = self.get_pos(vt_symbol)
 
             if vt_symbol not in targets and current_pos != 0:
-                rebalance_log.append(f"Close {vt_symbol} ({current_pos} lots)")
+                rebalance_log.append(f"平仓 {vt_symbol} ({current_pos}手)")
                 self.set_target(vt_symbol, 0)
 
-        # Open or rebalance positions
+        # 建仓/调仓
         for vt_symbol, target_vol in targets.items():
             current_pos = self.get_pos(vt_symbol)
 
             if target_vol != current_pos:
                 weight = final_weights.get(vt_symbol, 0)
                 rebalance_log.append(
-                    f"{vt_symbol}: {current_pos} lots -> {target_vol} lots "
-                    f"(Target weight {weight:.1%})"
+                    f"{vt_symbol}: {current_pos}手 -> {target_vol}手 "
+                    f"(目标权重 {weight:.1%})"
                 )
                 self.set_target(vt_symbol, target_vol)
 
         if rebalance_log:
-            self.write_log("Execute rebalancing: " + "; ".join(rebalance_log))
+            self.write_log("调仓执行: " + "; ".join(rebalance_log))
             self.rebalance_portfolio(bars)
 
-        # Record the rebalance time; actual weights are updated from filled positions on the next on_bars call
+        # 调仓后记录时间，当前权重要等成交后由下一次on_bars按真实持仓更新
         self.last_rebalance_date = current_datetime
 
-        # Logging output
-        risk_info = f"Risk scaling: {self.current_risk_scale:.2f}" if self.use_dynamic_weights else ""
+        # 日志输出
+        risk_info = f"风险缩放: {self.current_risk_scale:.2f}" if self.use_dynamic_weights else ""
         self.write_log(
-            f"Rebalancing complete | Equity: {total_equity:,.0f} | "
-            f"Cash: {self.current_capital:,.0f} | "
-            f"Trend: {self.market_trend} | "
-            f"Portfolio volatility: {self.current_volatility:.1%} {risk_info}"
+            f"调仓完成 | 权益: {total_equity:,.0f} | "
+            f"现金: {self.current_capital:,.0f} | "
+            f"趋势: {self.market_trend} | "
+            f"组合波动率: {self.current_volatility:.1%} {risk_info}"
         )
 
         self.put_event()

@@ -61,7 +61,7 @@ def main():
             "engine": "Local DailyReplay adapter (NOT vn.py)",
             "parameters": vars(args), "profile": config,
             "terminal_positions": dict(strategy.pos_data),
-            "execution_note": "Original strategy class is loaded unchanged. Daily limit orders "
+            "execution_note": "The original strategy calculations are loaded with English comments and logs. Daily limit orders "
                               "are matched against subsequent OHLC bars. Whole-order fills, "
                               "no cash/margin check, no corporate actions; initializer consumes "
                               "daily slices. This adapter has not been proven equivalent to vn.py. "
